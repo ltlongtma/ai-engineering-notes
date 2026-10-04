@@ -1,7 +1,7 @@
 # ai-engineering-notes: Design
 
 Date: 2026-10-04
-Status: Draft for owner review
+Status: Approved. Amendment 1 (section 14) approved by the owner on 2026-10-04.
 
 ## 1. Purpose
 
@@ -21,7 +21,7 @@ Out of scope: quizzes, flashcards, a website, and automatic commits.
 | Writing standard | ASD-STE100. STE-flavored mode for explanations. Strict mode for procedures, checklists, and prompt templates. |
 | Input processing | An AI skill extracts, verifies, classifies, and writes notes. The owner approves every change before the skill writes a note. |
 | Review channel | A review report file. The owner records decisions in the file. |
-| Categories | Defined by the inputs. The repository starts with four placeholder topics. |
+| Categories | Defined by the inputs. The repository starts with eight knowledge topics and one `tools` topic. `OVERVIEW.md` places each topic in a map of an agentic AI system (section 14). |
 | Cross-topic notes | One primary topic folder plus optional secondary topics. |
 | Source of truth | Markdown files in `topics/`. |
 | Exports | Combined MD is the default. MDX and PDF are optional and run locally. |
@@ -32,6 +32,8 @@ Out of scope: quizzes, flashcards, a website, and automatic commits.
 ```
 ai-engineering-notes/
 ├── README.md                    # purpose, workflow, topic index (generated section)
+├── OVERVIEW.md                  # map of an agentic AI system, see section 14
+├── assets/                      # overview.json and overview.html (Archify)
 ├── CONTRIBUTING.md              # ingest steps, review steps, STE rules, note template
 ├── inbox/                       # raw inputs
 │   ├── links.md                 # one URL per line, optional comment after "#"
@@ -41,13 +43,19 @@ ai-engineering-notes/
 │   ├── context-and-memory/
 │   ├── tokens-and-cost/
 │   ├── tool-calling/
+│   ├── workflows/
+│   ├── human-in-the-loop/
+│   ├── guardrails/
+│   ├── evals-and-observability/
+│   ├── tools/                   # one file for each tool category, see section 14
 │   └── mcp/
 │       ├── README.md            # one-line scope + generated note list
 │       ├── <note-slug>.md
 │       └── assets/              # diagram sources and rendered files
 ├── templates/
 │   ├── note.md
-│   └── review.md
+│   ├── review.md
+│   └── tools.md
 ├── .claude/skills/kb-ingest/
 │   └── SKILL.md
 ├── tools/
@@ -66,12 +74,17 @@ ai-engineering-notes/
     └── release.yml
 ```
 
-Each placeholder topic contains only a `README.md` with a one-line scope:
+Each starting topic contains only a `README.md` with a one-line scope:
 
 - `context-and-memory`: context windows, short-term and long-term memory, compaction, retrieval for agents.
 - `tokens-and-cost`: token counting, prompt caching, model choice by cost.
 - `tool-calling`: tool design, schemas, error handling.
 - `mcp`: MCP servers, clients, transports, and security.
+- `workflows`: agent loops, planning, multi-agent patterns, long-running tasks.
+- `human-in-the-loop`: approval points, review steps, handoff between the agent and a person.
+- `guardrails`: permissions, input and output checks, sandboxes, prompt injection.
+- `evals-and-observability`: evaluation of agent output, traces, metrics, cost tracking.
+- `tools`: skills, plugins, MCP servers, and CLI tools that the owner uses, with the opinion of the owner.
 
 The skill can propose a new topic. A new topic appears only after the owner approves it.
 
@@ -298,3 +311,43 @@ The `kb-ingest` skill has no unit tests. Acceptance for the skill is one real ru
 5. Phase 2 stops and lists the blocks that have no decision.
 6. `tools/export.py --format md --topic <name>` includes cross-listed notes.
 7. `tools/export.py --format mdx` and `--format pdf` run locally and produce files in `dist/`.
+8. `OVERVIEW.md` shows the Mermaid map, and each topic folder appears in its topic table. `assets/overview.html` opens in a browser.
+9. A tool file in `topics/tools/` with an entry that has no valid `Status:` line fails `make check`.
+10. A line in `inbox/links.md` with a `# tool:` comment produces a review report that proposes a tool category file.
+
+## 14. Amendment 1: overview map and tools
+
+Reason: the owner works toward agentic AI. The topics must show their place in one system. The owner also needs a place for tools that the owner finds useful.
+
+### 14.1 Overview
+
+- `OVERVIEW.md` in the repository root contains:
+  1. a Mermaid map with five layers: Foundations (`tokens-and-cost`, `context-and-memory`), Capabilities (`tool-calling`, `mcp`), Orchestration (`workflows`), Control and safety (`human-in-the-loop`, `guardrails`), and Quality (`evals-and-observability`). `tools` supports all layers.
+  2. one or two sentences for each layer about its place in an agent,
+  3. a table with one row for each topic: the layer, a link to the topic folder, and the scope. GitHub does not allow links in Mermaid nodes, so the table holds the links.
+  4. a link to `assets/overview.html`.
+- `assets/overview.json` is the Archify source. `assets/overview.html` is the rendered file. Both are in the repository. The command is the Archify command in the `kb-ingest` skill, with paths in `assets/`.
+- The root `README.md` links to `OVERVIEW.md`.
+- `build_index.py --check` fails when a folder in `topics/` has no row in the `OVERVIEW.md` table. A new topic thus needs an overview update in the same change.
+- The owner writes and changes the overview. The skill proposes an overview update in the Placement block when it proposes a new topic.
+
+### 14.2 Tools
+
+- The primary topic `tools` holds one file for each category, for example `claude-code-skills.md`, `claude-code-plugins.md`, `mcp-servers.md`, and `cli-tools.md`. The owner can add a category.
+- `templates/tools.md` uses the note frontmatter (section 5) with `topics: [tools]`, and these sections: `Summary`, `Tools`, `Related`, `Sources`. `sources` lists the link of each tool.
+- Each tool is one `###` entry in `Tools`:
+
+```markdown
+### <tool name>
+
+- Type: skill | plugin | MCP server | CLI
+- Link: https://...
+- Use for: <one sentence>
+- Status: using | tried | dropped
+- My verdict: <the words of the owner>
+```
+
+- `check_notes.py` reports an error when a file in `topics/tools/` has a `###` entry without a `Link:` line, or without a `Status:` line with one of the three values.
+- `My verdict` is the opinion of the owner. The skill keeps its words and does not rewrite them. The STE rules of section 6 apply to the other lines.
+- Input: a line in `inbox/links.md` with a `# tool: <verdict>` comment. The skill treats the verdict as a claim with `kind: experience`. It verifies only the name, the type, the link, and the purpose of the tool. It proposes the category file in the Placement block.
+- Exports treat `tools` as a normal topic.
