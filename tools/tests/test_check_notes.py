@@ -4,6 +4,7 @@ from check_notes import check_repo
 from tests.helpers import copy_kb, edit
 
 NOTE = "topics/mcp/schema-design.md"
+TOOL_FILE = "topics/tools/cli-tools.md"
 
 
 class CheckNotesTest(unittest.TestCase):
@@ -57,6 +58,31 @@ class CheckNotesTest(unittest.TestCase):
         edit(self.note, "confidence: high\n", "confidence high\n")
         self.assertOneError("frontmatter line")
 
+
+    def test_tool_entry_needs_a_link_line(self):
+        edit(self.root / TOOL_FILE, "- Link: https://github.com/jqlang/jq\n", "")
+        self.assertOneError("the tool entry 'jq' has no 'Link:' line")
+
+    def test_tool_entry_link_line_needs_a_value(self):
+        edit(self.root / TOOL_FILE, "- Link: https://github.com/jqlang/jq\n", "- Link:\n")
+        self.assertOneError("the tool entry 'jq' has no 'Link:' line")
+
+    def test_tool_entry_needs_a_status_line(self):
+        edit(self.root / TOOL_FILE, "- Status: using\n", "")
+        self.assertOneError("the tool entry 'ripgrep' has no 'Status:' line with using, tried, or dropped")
+
+    def test_tool_entry_status_must_be_one_of_three_values(self):
+        for value in ("maybe", "Using", "using daily", "using | tried | dropped", ""):
+            with self.subTest(value=value):
+                root = copy_kb(self)
+                edit(root / TOOL_FILE, "- Status: tried\n", f"- Status: {value}\n")
+                errors = check_repo(root)
+                self.assertEqual(len(errors), 1, errors)
+                self.assertIn("the tool entry 'jq' has no 'Status:' line", errors[0])
+
+    def test_heading_in_another_topic_is_not_a_tool_entry(self):
+        edit(self.note, "## Related", "### An example heading\n\n## Related")
+        self.assertEqual(check_repo(self.root), [])
 
 if __name__ == "__main__":
     unittest.main()

@@ -14,20 +14,45 @@ CONFIDENCE_VALUES = ("high", "medium", "low")
 KEBAB_CASE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
 LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 EXTERNAL = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|#)", re.I)
+TOOLS_TOPIC = "tools"
+STATUS_VALUES = ("using", "tried", "dropped")
+ENTRY_FIELD = re.compile(r"^\s*[-*]\s+(Link|Status):(.*)$")
 
 
-def related_section(body: str) -> str:
-    """Return the text between '## Related' and the next level-2 heading."""
+def section(body: str, title: str) -> str:
+    """Return the text between '## <title>' and the next level-2 heading."""
     lines = body.split("\n")
     collected: list[str] = []
     inside = False
     for line in lines:
         if line.startswith("## "):
-            inside = line.strip() == "## Related"
+            inside = line.strip() == f"## {title}"
             continue
         if inside:
             collected.append(line)
     return "\n".join(collected)
+
+
+def tool_entry_errors(rel: str, body: str) -> list[str]:
+    """Check each '### ' entry in the Tools section of a tool category file (spec section 14.2)."""
+    entries: list[tuple[str, list[str]]] = []
+    for line in section(body, "Tools").split("\n"):
+        if line.startswith("### "):
+            entries.append((line[4:].strip(), []))
+        elif entries:
+            entries[-1][1].append(line)
+    errors: list[str] = []
+    for name, lines in entries:
+        fields: dict[str, list[str]] = {"Link": [], "Status": []}
+        for line in lines:
+            match = ENTRY_FIELD.match(line)
+            if match:
+                fields[match.group(1)].append(match.group(2).strip())
+        if not any(fields["Link"]):
+            errors.append(f"{rel}: the tool entry '{name}' has no 'Link:' line")
+        if not any(value in STATUS_VALUES for value in fields["Status"]):
+            errors.append(f"{rel}: the tool entry '{name}' has no 'Status:' line with using, tried, or dropped")
+    return errors
 
 
 def check_note(path: Path, root: Path) -> list[str]:
@@ -59,12 +84,14 @@ def check_note(path: Path, root: Path) -> list[str]:
         errors.append(f"{rel}: 'confidence' is '{confidence}'. Use high, medium, or low")
     if "(unverified)" in note.body and confidence != "low":
         errors.append(f"{rel}: the note contains '(unverified)', so 'confidence' must be low")
-    for target in LINK.findall(related_section(note.body)):
+    for target in LINK.findall(section(note.body, "Related")):
         if EXTERNAL.match(target):
             continue
         file_part = target.split("#", 1)[0]
         if not (path.parent / file_part).resolve().is_file():
             errors.append(f"{rel}: the Related link '{target}' does not resolve to a file")
+    if note.folder == TOOLS_TOPIC:
+        errors.extend(tool_entry_errors(rel, note.body))
     return errors
 
 
