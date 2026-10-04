@@ -2,7 +2,7 @@ import contextlib
 import io
 import unittest
 
-from build_index import IndexMarkerError, expected_files, main
+from build_index import IndexMarkerError, expected_files, main, overview_errors
 from tests.helpers import copy_kb, edit
 
 
@@ -13,6 +13,19 @@ class BuildIndexTest(unittest.TestCase):
     def run_main(self, *args):
         with contextlib.redirect_stdout(io.StringIO()):
             return main([*args, "--root", str(self.root)])
+
+    def run_main_output(self, *args):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            code = main([*args, "--root", str(self.root)])
+        return code, out.getvalue()
+
+    def add_topic(self, name):
+        folder = self.root / "topics" / name
+        folder.mkdir()
+        (folder / "README.md").write_text(
+            f"# {name}\n\nScope: Test scope.\n\n## Notes\n\n<!-- index:start -->\n<!-- index:end -->\n",
+            encoding="utf-8")
 
     def read(self, rel):
         return (self.root / rel).read_text(encoding="utf-8")
@@ -50,6 +63,34 @@ class BuildIndexTest(unittest.TestCase):
         edit(self.root / "topics/mcp/README.md", "<!-- index:start -->\n", "")
         with self.assertRaises(IndexMarkerError):
             expected_files(self.root)
+
+    def test_topic_without_overview_row_fails_until_the_row_exists(self):
+        self.add_topic("agents")
+        code, out = self.run_main_output()
+        self.assertEqual(code, 1)
+        self.assertIn("error: OVERVIEW.md: the topic folder 'topics/agents/' has no row in the topic table", out)
+        self.assertIn("- [agents](topics/agents/README.md): Test scope. Notes: 0.\n", self.read("README.md"))
+        self.assertEqual(self.run_main("--check"), 1)
+        edit(self.root / "OVERVIEW.md", "| Capabilities | [mcp]",
+             "| Orchestration | [agents](topics/agents/README.md) | Agents. |\n| Capabilities | [mcp]")
+        self.assertEqual(self.run_main("--check"), 0)
+
+    def test_prose_link_is_not_a_table_row(self):
+        edit(self.root / "OVERVIEW.md", "| Capabilities | [mcp](topics/mcp/README.md) | MCP servers. |\n", "")
+        self.assertEqual(overview_errors(self.root),
+                         ["OVERVIEW.md: the topic folder 'topics/mcp/' has no row in the topic table"])
+
+    def test_row_for_a_missing_topic_folder_is_an_error(self):
+        edit(self.root / "OVERVIEW.md", "| Foundations | [tokens-and-cost]",
+             "| Orchestration | [agents](topics/agents/README.md) | Agents. |\n| Foundations | [tokens-and-cost]")
+        self.assertEqual(overview_errors(self.root),
+                         ["OVERVIEW.md: a table row links 'topics/agents/README.md', but the folder does not exist"])
+
+    def test_missing_overview_is_an_error(self):
+        (self.root / "OVERVIEW.md").unlink()
+        self.assertEqual(overview_errors(self.root),
+                         ["OVERVIEW.md: is missing. It needs one table row for each topic folder"])
+        self.assertEqual(self.run_main("--check"), 1)
 
 
 if __name__ == "__main__":

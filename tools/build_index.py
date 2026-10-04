@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -10,6 +11,9 @@ from notelib import REPO_ROOT, FrontmatterError, Note, load_notes, topic_names
 
 START = "<!-- index:start -->"
 END = "<!-- index:end -->"
+OVERVIEW = "OVERVIEW.md"
+# A row of the OVERVIEW.md topic table links the README of one topic folder.
+TOPIC_ROW_LINK = re.compile(r"\]\(topics/([^/)\s]+)/README\.md\)")
 
 
 class IndexMarkerError(Exception):
@@ -72,6 +76,26 @@ def expected_files(root: Path) -> dict[Path, str]:
     return result
 
 
+def overview_errors(root: Path) -> list[str]:
+    """Return an error for each topic folder without a row in the OVERVIEW.md table (spec section 14.1).
+
+    A row is a line that starts with '|'. A row that links a missing topic folder is also an error.
+    """
+    path = root / OVERVIEW
+    if not path.is_file():
+        return [f"{OVERVIEW}: is missing. It needs one table row for each topic folder"]
+    linked: set[str] = set()
+    for line in path.read_text(encoding="utf-8").split("\n"):
+        if line.lstrip().startswith("|"):
+            linked.update(TOPIC_ROW_LINK.findall(line))
+    topics = set(topic_names(root))
+    errors = [f"{OVERVIEW}: the topic folder 'topics/{topic}/' has no row in the topic table"
+              for topic in sorted(topics - linked)]
+    errors += [f"{OVERVIEW}: a table row links 'topics/{topic}/README.md', but the folder does not exist"
+               for topic in sorted(linked - topics)]
+    return errors
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="fail if a generated section is not current")
@@ -83,6 +107,9 @@ def main(argv: list[str] | None = None) -> int:
     except (IndexMarkerError, FrontmatterError) as error:
         print(f"error: {error}")
         return 1
+    overview = overview_errors(root)
+    for error in overview:
+        print(f"error: {error}")
     stale = [p for p, text in expected.items() if p.read_text(encoding="utf-8") != text]
     for path in stale:
         rel = path.relative_to(root).as_posix()
@@ -92,9 +119,9 @@ def main(argv: list[str] | None = None) -> int:
             path.write_text(expected[path], encoding="utf-8")
             print(f"updated {rel}")
     if args.check:
-        print(f"build_index --check: {len(expected)} files, {len(stale)} not current")
-        return 1 if stale else 0
-    return 0
+        print(f"build_index --check: {len(expected)} files, {len(stale)} not current, {len(overview)} overview errors")
+        return 1 if stale or overview else 0
+    return 1 if overview else 0
 
 
 if __name__ == "__main__":
