@@ -49,5 +49,17 @@ class SteCheckTest(unittest.TestCase):
         self.assertEqual([(f.rule, f.severity) for f in strict], [("synonym-rotation", "error")])
 
 
+    def test_verdict_line_produces_no_finding(self):
+        text = "- Use for: Search files.\n- My verdict: It is liked by me; the best tool!\n"
+        self.assertEqual(check_text(text), [])
+
+    def test_other_entry_lines_are_still_checked(self):
+        text = "- Use for: Search files; read JSON.\n- My verdict: It is liked by me; the best tool!\n"
+        self.assertEqual([(f.line, f.rule) for f in check_text(text)], [(1, "semicolon")])
+
+    def test_verdict_line_in_strict_block_produces_no_finding(self):
+        text = "<!-- ste:strict -->\n- My verdict: It is liked by me; the best tool!\n<!-- /ste:strict -->\n"
+        self.assertEqual(check_text(text), [])
+
 if __name__ == "__main__":
     unittest.main()

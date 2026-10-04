@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """STE check for Markdown files. Wraps the vendored ste-lint.py.
 
-1. Removes frontmatter, blockquotes, and Strict markers from the text.
+1. Removes frontmatter, blockquotes, `My verdict:` lines, and Strict markers from the text.
 2. Lints the remaining STE-flavored text. Hard findings are errors.
    Advisory findings and synonym rotation are warnings.
 3. Lints each <!-- ste:strict --> block alone. The sentence cap is 20 words.
@@ -28,6 +28,8 @@ FLAVORED_WARNINGS = {"passive-voice", "present-perfect", "synonym-rotation"}
 # Any indentation: a fence inside a list item is still a fence. The vendored linter also strips indentation.
 FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
 BLOCKQUOTE = re.compile(r"^\s{0,3}>")
+# Spec section 14.2: the "My verdict" line of a tool entry keeps the words of the owner. STE does not apply.
+VERDICT = re.compile(r"^\s*[-*]\s+My verdict:")
 SKIP_DIRS = {".git", ".archify", ".superpowers", "dist", "inbox", "node_modules"}
 SKIP_PATHS = {"docs/superpowers", "tools/tests/fixtures"}
 
@@ -40,6 +42,11 @@ def _load_linter():
 
 
 _LINTER = _load_linter()
+
+
+def _exempt(line: str) -> bool:
+    """Return True for a line that keeps the words of another author: a blockquote or a verdict line."""
+    return bool(BLOCKQUOTE.match(line) or VERDICT.match(line))
 
 
 @dataclass(frozen=True)
@@ -101,7 +108,7 @@ def _split_regions(lines: list[str], path: str):
                 blocks.append((open_index + 1, index - 1))
                 open_index = None
             continue
-        if BLOCKQUOTE.match(line):
+        if _exempt(line):
             flavored[index] = ""
             continue
         if fence_match:
@@ -135,7 +142,7 @@ def check_text(text: str, path: str = "<text>") -> list[Finding]:
         severity = "warning" if raw["rule"] in FLAVORED_WARNINGS else "error"
         findings.append(_to_finding(raw, severity))
     for first, last in blocks:
-        strict = [lines[i] if first <= i <= last and not BLOCKQUOTE.match(lines[i]) else ""
+        strict = [lines[i] if first <= i <= last and not _exempt(lines[i]) else ""
                   for i in range(len(lines))]
         findings.extend(_to_finding(raw, "error") for raw in _lint(strict, STRICT_CAP, path))
     return sorted(findings, key=lambda f: (f.line, f.col, f.rule))
