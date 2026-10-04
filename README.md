@@ -36,8 +36,8 @@ The linter does not contain the official ASD dictionary.
 The tool `tools/build_index.py` writes this list. Do not edit it.
 
 <!-- index:start -->
-- [context-and-memory](topics/context-and-memory/README.md): Context windows, short-term and long-term memory, compaction, retrieval for agents. Notes: 0.
+- [context-and-memory](topics/context-and-memory/README.md): Context windows, short-term and long-term memory, compaction, retrieval for agents. Notes: 2.
 - [mcp](topics/mcp/README.md): MCP servers, clients, transports, and security. Notes: 0.
-- [tokens-and-cost](topics/tokens-and-cost/README.md): Token counting, prompt caching, model choice by cost. Notes: 0.
+- [tokens-and-cost](topics/tokens-and-cost/README.md): Token counting, prompt caching, model choice by cost. Notes: 2.
 - [tool-calling](topics/tool-calling/README.md): Tool design, schemas, error handling. Notes: 0.
 <!-- index:end -->
