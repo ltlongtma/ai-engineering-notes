@@ -45,6 +45,6 @@ The tool `tools/build_index.py` writes this list. Do not edit it.
 - [mcp](topics/mcp/README.md): MCP servers, clients, transports, and security. Notes: 0.
 - [tokens-and-cost](topics/tokens-and-cost/README.md): Token counting, prompt caching, model choice by cost. Notes: 2.
 - [tool-calling](topics/tool-calling/README.md): Tool design, schemas, error handling. Notes: 0.
-- [tools](topics/tools/README.md): Skills, plugins, MCP servers, and CLI tools that the owner uses, with the opinion of the owner. Notes: 0.
+- [tools](topics/tools/README.md): Skills, plugins, MCP servers, and CLI tools that the owner uses, with the opinion of the owner. Notes: 1.
 - [workflows](topics/workflows/README.md): Agent loops, planning, multi-agent patterns, long-running tasks. Notes: 0.
 <!-- index:end -->

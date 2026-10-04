@@ -7,5 +7,5 @@ Scope: Skills, plugins, MCP servers, and CLI tools that the owner uses, with the
 The tool `tools/build_index.py` writes this list. Do not edit it.
 
 <!-- index:start -->
-No notes yet.
+- [Agent skills](agent-skills.md)
 <!-- index:end -->
