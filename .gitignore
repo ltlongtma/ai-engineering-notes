@@ -7,4 +7,5 @@
 dist/
 .archify/
 topics/*/assets/*.delivery.json
+/assets/*.delivery.json
 __pycache__/

@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Map of an agentic AI system",
+    "output": "assets/overview.html",
+    "locale": "en",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    { "id": "task", "type": "external", "label": "Task", "sublabel": "from a person or a system", "pos": [40, 220], "size": [150, 64] },
+    { "id": "guardrails", "type": "security", "label": "Guardrails", "sublabel": "guardrails", "tag": "Control and safety", "pos": [280, 220], "size": [150, 64] },
+    { "id": "agent-loop", "type": "backend", "label": "Agent loop", "sublabel": "workflows", "tag": "Orchestration", "pos": [520, 220], "size": [160, 64] },
+    { "id": "tool-calls", "type": "backend", "label": "Tool calls", "sublabel": "tool-calling", "tag": "Capabilities", "pos": [780, 220], "size": [150, 64] },
+    { "id": "mcp-servers", "type": "cloud", "label": "MCP servers", "sublabel": "mcp", "tag": "Capabilities", "pos": [1030, 220], "size": [150, 64] },
+    { "id": "person", "type": "external", "label": "Person in the loop", "sublabel": "human-in-the-loop", "tag": "Control and safety", "pos": [520, 50], "size": [160, 64] },
+    { "id": "evals", "type": "messagebus", "label": "Evals and traces", "sublabel": "evals-and-observability", "tag": "Quality", "pos": [780, 50], "size": [150, 64] },
+    { "id": "context", "type": "database", "label": "Context and memory", "sublabel": "context-and-memory", "tag": "Foundations", "pos": [400, 400], "size": [170, 64] },
+    { "id": "model", "type": "cloud", "label": "Model and tokens", "sublabel": "tokens-and-cost", "tag": "Foundations", "pos": [640, 400], "size": [160, 64] }
+  ],
+  "connections": [
+    { "id": "task-in", "from": "task", "to": "guardrails", "label": "input" },
+    { "id": "checked-input", "from": "guardrails", "to": "agent-loop", "label": "checked input", "variant": "security" },
+    { "id": "call-tool", "from": "agent-loop", "to": "tool-calls", "label": "call tool", "variant": "emphasis" },
+    { "id": "mcp-request", "from": "tool-calls", "to": "mcp-servers", "label": "MCP request" },
+    { "id": "approval", "from": "agent-loop", "to": "person", "label": "ask approval", "fromSide": "top", "toSide": "bottom" },
+    { "id": "traces", "from": "tool-calls", "to": "evals", "label": "traces", "variant": "dashed", "fromSide": "top", "toSide": "bottom" },
+    { "id": "read-context", "from": "agent-loop", "to": "context", "label": "read and write", "fromSide": "bottom", "toSide": "top" },
+    { "id": "prompt-model", "from": "agent-loop", "to": "model", "label": "prompt", "fromSide": "bottom", "toSide": "top" }
+  ],
+  "cards": [
+    { "dot": "slate", "title": "Foundations", "items": ["The model reads tokens, and each token has a cost.", "The context window and the memory hold what the agent knows."] },
+    { "dot": "cyan", "title": "Capabilities", "items": ["Tools let the agent act outside the model.", "MCP gives one protocol to connect tools and data to an agent."] },
+    { "dot": "emerald", "title": "Orchestration", "items": ["The agent loop plans the work, calls tools, and reads the results.", "A workflow connects the steps and the agents until the task is complete."] },
+    { "dot": "rose", "title": "Control and safety", "items": ["Guardrails limit what the agent can read and do.", "A person approves the high-risk steps and takes control when the agent stops."] },
+    { "dot": "amber", "title": "Quality", "items": ["Evals measure the output of the agent.", "Traces and metrics show each step, its tokens, and its cost."] },
+    { "dot": "violet", "title": "Tools", "items": ["The tools topic supports all layers.", "It lists the skills, plugins, MCP servers, and CLI tools that the owner uses."] }
+  ]
+}

@@ -5,6 +5,8 @@ This repository is a personal notebook of AI engineering knowledge and experienc
 - Goal 1: Keep knowledge so that the owner can read it again later.
 - Goal 2: Share selected parts with other teams.
 
+[OVERVIEW.md](OVERVIEW.md) shows the place of each topic in a map of an agentic AI system.
+
 ## How it works
 
 1. The owner puts raw inputs in `inbox/`.
@@ -37,7 +39,12 @@ The tool `tools/build_index.py` writes this list. Do not edit it.
 
 <!-- index:start -->
 - [context-and-memory](topics/context-and-memory/README.md): Context windows, short-term and long-term memory, compaction, retrieval for agents. Notes: 2.
+- [evals-and-observability](topics/evals-and-observability/README.md): Evaluation of agent output, traces, metrics, cost tracking. Notes: 0.
+- [guardrails](topics/guardrails/README.md): Permissions, input and output checks, sandboxes, prompt injection. Notes: 0.
+- [human-in-the-loop](topics/human-in-the-loop/README.md): Approval points, review steps, handoff between the agent and a person. Notes: 0.
 - [mcp](topics/mcp/README.md): MCP servers, clients, transports, and security. Notes: 0.
 - [tokens-and-cost](topics/tokens-and-cost/README.md): Token counting, prompt caching, model choice by cost. Notes: 2.
 - [tool-calling](topics/tool-calling/README.md): Tool design, schemas, error handling. Notes: 0.
+- [tools](topics/tools/README.md): Skills, plugins, MCP servers, and CLI tools that the owner uses, with the opinion of the owner. Notes: 0.
+- [workflows](topics/workflows/README.md): Agent loops, planning, multi-agent patterns, long-running tasks. Notes: 0.
 <!-- index:end -->
