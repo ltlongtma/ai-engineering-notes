@@ -49,13 +49,13 @@ The linter does not contain the official ASD dictionary.
 The tool `tools/build_index.py` writes this list. Do not edit it.
 
 <!-- index:start -->
-- [context-and-memory](topics/context-and-memory/README.md): Context windows, short-term and long-term memory, compaction, retrieval for agents. Notes: 2.
-- [evals-and-observability](topics/evals-and-observability/README.md): Evaluation of agent output, traces, metrics, cost tracking. Notes: 0.
-- [guardrails](topics/guardrails/README.md): Permissions, input and output checks, sandboxes, prompt injection. Notes: 0.
-- [human-in-the-loop](topics/human-in-the-loop/README.md): Approval points, review steps, handoff between the agent and a person. Notes: 0.
+- [context-and-memory](topics/context-and-memory/README.md): Context windows, short-term and long-term memory, compaction, retrieval for agents. Notes: 3.
+- [evals-and-observability](topics/evals-and-observability/README.md): Evaluation of agent output, traces, metrics, cost tracking. Notes: 3.
+- [guardrails](topics/guardrails/README.md): Permissions, input and output checks, sandboxes, prompt injection. Notes: 1.
+- [human-in-the-loop](topics/human-in-the-loop/README.md): Approval points, review steps, handoff between the agent and a person. Notes: 3.
 - [mcp](topics/mcp/README.md): MCP servers, clients, transports, and security. Notes: 0.
 - [tokens-and-cost](topics/tokens-and-cost/README.md): Token counting, prompt caching, model choice by cost. Notes: 2.
 - [tool-calling](topics/tool-calling/README.md): Tool design, schemas, error handling. Notes: 0.
 - [tools](topics/tools/README.md): Skills, plugins, MCP servers, and CLI tools that the owner uses, with the opinion of the owner. Notes: 2.
-- [workflows](topics/workflows/README.md): Agent loops, planning, multi-agent patterns, long-running tasks. Notes: 0.
+- [workflows](topics/workflows/README.md): Agent loops, planning, multi-agent patterns, long-running tasks. Notes: 5.
 <!-- index:end -->

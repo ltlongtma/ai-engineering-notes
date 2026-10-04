@@ -7,5 +7,5 @@ Scope: Permissions, input and output checks, sandboxes, prompt injection.
 The tool `tools/build_index.py` writes this list. Do not edit it.
 
 <!-- index:start -->
-No notes yet.
+- [Encode lessons in checks, not in instructions](encode-lessons-in-checks.md)
 <!-- index:end -->
