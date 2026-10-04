@@ -1,5 +1,9 @@
 # Global gitignore excludes docs/superpowers/. This repo keeps its specs and plans.
 !docs/superpowers/
+# Global gitignore excludes .claude. This repo keeps its project skills only.
+!.claude/
+.claude/*
+!.claude/skills/
 dist/
 .archify/
 topics/*/assets/*.delivery.json
