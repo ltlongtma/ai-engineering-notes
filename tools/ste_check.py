@@ -25,7 +25,8 @@ FLAVORED_CAP = 25
 STRICT_CAP = 20
 # Advisory rules plus the lexical rule (one word, one meaning). Spec section 6: lexical rules are advisory.
 FLAVORED_WARNINGS = {"passive-voice", "present-perfect", "synonym-rotation"}
-FENCE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
+# Any indentation: a fence inside a list item is still a fence. The vendored linter also strips indentation.
+FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
 BLOCKQUOTE = re.compile(r"^\s{0,3}>")
 SKIP_DIRS = {".git", ".archify", ".superpowers", "dist", "inbox", "node_modules"}
 SKIP_PATHS = {"docs/superpowers", "tools/tests/fixtures"}

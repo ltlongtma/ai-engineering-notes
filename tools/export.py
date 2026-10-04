@@ -19,8 +19,10 @@ from notelib import REPO_ROOT, FrontmatterError, Note, load_notes, topic_names
 
 FORMATS = ("md", "mdx", "pdf")
 MERMAID_VERSION = "11.12.0"
-FENCE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
-INLINE_CODE = re.compile(r"`[^`\n]*`")
+# Any indentation: a fence inside a list item is still a fence. The vendored linter also strips indentation.
+FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
+# A code span opens and closes with backtick runs of the same length.
+INLINE_CODE = re.compile(r"(?<!`)(`+)(?!`).+?(?<!`)\1(?!`)")
 LINK = re.compile(r"(!?)\[([^\]]*)\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 EXTERNAL = re.compile(r"^[a-z][a-z0-9+.-]*:", re.I)
 HEADING = re.compile(r"^(#{1,5}) ")

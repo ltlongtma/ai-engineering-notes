@@ -1,7 +1,7 @@
 import re
 import unittest
 
-from export import ExportError, export, render_md, render_mdx
+from export import ExportError, escape_mdx, export, render_md, render_mdx
 from notelib import load_notes
 from tests.helpers import copy_kb
 
@@ -48,6 +48,13 @@ class ExportTest(unittest.TestCase):
         self.assertIn('A schema such as `{"type": "object"}` costs', text)
         self.assertTrue(text.startswith('---\ntitle: "AI engineering notes: tool-calling"\n---\n'))
         self.assertIn('<a id="note-mcp-schema-design"></a>', text)
+
+    def test_mdx_keeps_list_indented_fence_unchanged(self):
+        text = '1. Send this:\n\n    ```json\n    {"a": 1}\n    ```\n\n2. Read {x}.\n'
+        self.assertEqual(escape_mdx(text), '1. Send this:\n\n    ```json\n    {"a": 1}\n    ```\n\n2. Read \\{x\\}.\n')
+
+    def test_mdx_keeps_double_backtick_code_unchanged(self):
+        self.assertEqual(escape_mdx("Use ``{x}`` or ``a ` {b}`` here."), "Use ``{x}`` or ``a ` {b}`` here.")
 
     def test_unknown_topic_is_an_error(self):
         with self.assertRaises(ExportError):

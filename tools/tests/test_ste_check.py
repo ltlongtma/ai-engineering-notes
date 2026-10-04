@@ -38,6 +38,10 @@ class SteCheckTest(unittest.TestCase):
         text = "Use this marker:\n\n```markdown\n<!-- ste:strict -->\nThe file is deleted.\n```\n"
         self.assertEqual(check_text(text), [])
 
+    def test_marker_inside_list_indented_fence_is_text(self):
+        text = "1. Add the markers:\n\n    ```markdown\n    <!-- ste:strict -->\n    1. Open the file.\n    ```\n\n2. Save the file.\n"
+        self.assertEqual(check_text(text), [])
+
     def test_synonym_rotation_is_warning_outside_strict_and_error_inside(self):
         flavored = check_text("Check the file. Verify the output.\n")
         self.assertEqual([(f.rule, f.severity) for f in flavored], [("synonym-rotation", "warning")])
