@@ -1,0 +1,3 @@
+# Global gitignore excludes docs/superpowers/. This repo keeps its specs and plans.
+!docs/superpowers/
+dist/
