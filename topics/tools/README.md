@@ -8,4 +8,5 @@ The tool `tools/build_index.py` writes this list. Do not edit it.
 
 <!-- index:start -->
 - [Agent skills](agent-skills.md)
+- [MCP servers](mcp-servers.md)
 <!-- index:end -->

@@ -56,6 +56,7 @@ Use `/clear` between unrelated tasks. Use `/rename` before `/clear`, and use `/r
 ## Related
 
 - [Claude Code cost depends on the prompt cache, the model, and the effort](../tokens-and-cost/claude-code-prompt-cache-cost.md)
+- [MCP servers](../tools/mcp-servers.md)
 
 ## Sources
 
