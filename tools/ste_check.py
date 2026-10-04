@@ -27,7 +27,7 @@ STRICT_CAP = 20
 FLAVORED_WARNINGS = {"passive-voice", "present-perfect", "synonym-rotation"}
 FENCE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
 BLOCKQUOTE = re.compile(r"^\s{0,3}>")
-SKIP_DIRS = {".git", ".archify", "dist", "inbox", "node_modules"}
+SKIP_DIRS = {".git", ".archify", ".superpowers", "dist", "inbox", "node_modules"}
 SKIP_PATHS = {"docs/superpowers", "tools/tests/fixtures"}
 
 
