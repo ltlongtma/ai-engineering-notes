@@ -84,6 +84,7 @@ https://github.com/BurntSushi/ripgrep # tool: Faster than grep, and it skips git
 ```
 
 The text after `# tool:` is the verdict of the owner.
+For a tool input, do these steps instead of steps 6 to 9 of the procedure.
 
 <!-- ste:strict -->
 1. Write one claim block for the tool. Use the verdict as the quote. Write `Kind: experience`.
@@ -172,7 +173,7 @@ A decision is valid when exactly one box in the `Decision:` line has an `x`.
 9. Write each new note from `templates/note.md`.
 10. Write each new tool category file from `templates/tools.md`.
 11. Update each existing note and each tool entry that the report names.
-12. Put each claim with `Kind: experience` in the `Details` section. Keep the words of the owner.
+12. Except for a tool input, put each claim with `Kind: experience` in the `Details` section. Keep the words of the owner.
 13. For a tool input, write one `###` entry in the `Tools` section of the category file.
 14. Write the verdict of the owner in the `My verdict:` line. Do not change its words.
 15. Leave the `My takeaways` section empty for the owner.
