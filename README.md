@@ -17,6 +17,16 @@ This repository is a personal notebook of AI engineering knowledge and experienc
 
 `CONTRIBUTING.md` gives the full steps, the note template, and the writing rules.
 
+## Website
+
+The `pages` workflow publishes a website to GitHub Pages after each push to `main`.
+The home page shows the overview map and one card for each topic, grouped by layer.
+When the content of a card is short, a click opens the content in a modal.
+When the content is long, a click opens a separate page.
+Each topic and each note also has its own page.
+
+To use the website, set the Pages source to "GitHub Actions" in the repository settings one time.
+
 ## Writing standard
 
 The text in this repository follows the principles of ASD-STE100 Simplified Technical English.
@@ -32,6 +42,7 @@ The linter does not contain the official ASD dictionary.
 | `python3 tools/export.py --format md --topic mcp` | Writes `dist/mcp.md`. Use `--topic all` for all notes. |
 | `python3 tools/export.py --format mdx --topic all` | Writes `dist/all.mdx`. |
 | `python3 tools/export.py --format pdf --topic all` | Writes `dist/all.pdf`. Needs Pandoc and Google Chrome. |
+| `make site` | Writes the website to `dist/site/`. Open `dist/site/index.html` through a local HTTP server. |
 
 ## Topics
 
