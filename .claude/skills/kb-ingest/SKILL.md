@@ -30,6 +30,7 @@ This skill has two phases. Start a phase only when the owner asks for it.
 | URL | Each line in `inbox/links.md` that starts with `http://` or `https://`. Text after ` #` is a comment. |
 | Document | `inbox/*.pdf`, `inbox/*.md`, `inbox/*.txt`. Ignore `inbox/*.review.md`. |
 | Owner insight | `inbox/notes/*.md`. Each claim from this input has `Kind: experience`. |
+| Tool | A URL line in `inbox/links.md` with a `# tool: <verdict>` comment. Read the "Tool inputs" section. |
 
 The slug of a file input is its file name without the extension, in `kebab-case`.
 The slug of a URL is the last part of the URL path, in `kebab-case`. If the path is empty, use the host name.
@@ -74,6 +75,28 @@ Use these sources:
 7. For a claim with `Kind: experience`, verify only the factual parts. Propose corrections to the facts only.
 <!-- /ste:strict -->
 
+### Tool inputs
+
+A tool input is a line in `inbox/links.md` with a `# tool:` comment, for example:
+
+```text
+https://github.com/BurntSushi/ripgrep # tool: Faster than grep, and it skips gitignored files by default.
+```
+
+The text after `# tool:` is the verdict of the owner.
+
+<!-- ste:strict -->
+1. Write one claim block for the tool. Use the verdict as the quote. Write `Kind: experience`.
+2. Verify only the name, the type, the link, and the purpose of the tool.
+3. Do not verify the verdict. Do not change its words.
+4. In the `Proposal:` line, write the entry fields: `Type`, `Link`, `Use for`, and `Status`.
+5. Use the words of the verdict to select the status: `using`, `tried`, or `dropped`.
+6. If the verdict does not show the status, propose `using`. Write "The verdict does not show the status" in the proposal.
+7. Search `topics/tools/` for the link. If an entry has the link, propose an update to that entry.
+8. In the Placement block, write `Primary topic: tools`. Write the category file in the `Notes:` line.
+9. If no category file agrees with the type of the tool, propose a new category file.
+<!-- /ste:strict -->
+
 ### Report format
 
 Use one block for each claim:
@@ -110,8 +133,12 @@ The report has one Placement block. The Placement block contains these items:
 
 - the primary topic and the secondary topics,
 - each proposed new topic, with a one-line scope,
+- for each proposed new topic, the overview update: the layer, the table row, and the place in the Mermaid map,
+- for a tool input, the category file in `topics/tools/`,
 - each proposal to divide the input into more than one note,
 - each proposed diagram, with the tool: Mermaid or Archify.
+
+The `Overview:` line of the Placement block holds the overview update, or `none`.
 
 Propose Archify only for a complex diagram, for example an architecture or a long sequence.
 
@@ -140,24 +167,30 @@ A decision is valid when exactly one box in the `Decision:` line has an `x`.
 4. If the owner rejects the Placement block, stop. Ask the owner for the placement.
 5. For each accepted new topic, make the folder `topics/<topic>/`.
 6. Copy `README.md` from an existing topic folder into the new folder. Write the new name and scope.
-7. Write each new note from `templates/note.md`.
-8. Update each existing note that the report names.
-9. Put each claim with `Kind: experience` in the `Details` section. Keep the words of the owner.
-10. Leave the `My takeaways` section empty for the owner.
-11. Put procedures, checklists, and prompt templates between Strict markers.
-12. Put verbatim quotes from sources in blockquotes.
-13. Add each source to `sources` in the frontmatter and to the `Sources` section.
-14. Set `verified_at` and `last_reviewed` to the date of today.
-15. Set `confidence` to `low` if the note contains `(unverified)`.
-16. Make each accepted diagram. Use the next section.
-17. Add links in `Related` between the new note and the notes on the same subject.
-18. Run `make index`.
-19. Run `make check`.
-20. If `make check` shows an error, correct the error. Run `make check` again.
-21. Make a maximum of two correction attempts. Then tell the owner about each error that remains.
-22. Move the input and its report to `inbox/archive/<YYYY-MM-DD>-<slug>/`.
-23. For a URL input, remove the line from `inbox/links.md`.
-24. Tell the owner which files changed. Do not commit.
+7. For each accepted new topic, add the accepted row to the topic table in `OVERVIEW.md`.
+8. Add the new topic to the Mermaid map in `OVERVIEW.md`, in the accepted layer. Do not change other text in `OVERVIEW.md`.
+9. Write each new note from `templates/note.md`.
+10. Write each new tool category file from `templates/tools.md`.
+11. Update each existing note and each tool entry that the report names.
+12. Put each claim with `Kind: experience` in the `Details` section. Keep the words of the owner.
+13. For a tool input, write one `###` entry in the `Tools` section of the category file.
+14. Write the verdict of the owner in the `My verdict:` line. Do not change its words.
+15. Leave the `My takeaways` section empty for the owner.
+16. Put procedures, checklists, and prompt templates between Strict markers.
+17. Put verbatim quotes from sources in blockquotes.
+18. Add each source to `sources` in the frontmatter and to the `Sources` section. For a tool, the source is the link of the tool.
+19. Set `verified_at` and `last_reviewed` to the date of today.
+20. Set `confidence` to `low` if the note contains `(unverified)`.
+21. Make each accepted diagram. Use the next section.
+22. Add links in `Related` between the new note and the notes on the same subject.
+23. Run `make index`.
+24. Run `make check`.
+25. If `make check` shows an error, correct the error. Run `make check` again.
+26. Make a maximum of two correction attempts. Then tell the owner about each error that remains.
+27. Move the input and its report to `inbox/archive/<YYYY-MM-DD>-<slug>/`.
+28. For a URL input, remove the line from `inbox/links.md`.
+29. Tell the owner which files changed. Do not commit.
+30. If you added a topic to `OVERVIEW.md`, tell the owner to update `assets/overview.json` and the HTML file.
 <!-- /ste:strict -->
 
 ### Diagrams

@@ -20,6 +20,7 @@ Decision: [ ] accept  [ ] reject  [ ] edit: ...
 Primary topic: <topic>
 Secondary topics: <topic>, <topic>
 New topic: none
+Overview: none
 Notes: one new note `<topic>/<note-slug>.md`
 Diagram: none
 Decision: [ ] accept  [ ] reject  [ ] edit: ...
